@@ -1,0 +1,32 @@
+{
+  "tasks": {
+    "dev": "vite",
+    "build": "vite build && vite build --ssr",
+    "preview": "vite preview",
+    "start": "deno serve -A server.prod.ts",
+    "check": "deno fmt --check . && deno lint . && deno check"
+  },
+  "imports": {
+    "chevalier": "jsr:@chevalier/core@^0.2.0",
+    "chevalier/client": "jsr:@chevalier/core@^0.2.0/client",
+    "chevalier/static": "jsr:@chevalier/core@^0.2.0/static",
+    "chevalier/vite": "jsr:@chevalier/core@^0.2.0/vite",
+    "hono": "npm:hono@^4.6.0",
+    "preact": "npm:preact@^10.24.0",
+    "preact/": "npm:/preact@^10.24.0/",
+    "preact-render-to-string": "npm:preact-render-to-string@^6.5.0",
+    "vite": "npm:vite@^8.0.0",
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^2.0.2",
+    "@prefresh/vite": "npm:@prefresh/vite@^3.0.1",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.0.0",
+    "tailwindcss": "npm:tailwindcss@^4.0.0"
+  },
+  "nodeModulesDir": "auto",
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "lib": ["dom", "dom.iterable", "deno.ns", "esnext"],
+    "types": ["vite/client"]
+  }
+}
