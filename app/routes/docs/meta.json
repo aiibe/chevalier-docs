@@ -1,0 +1,62 @@
+{
+  "introduction": {
+    "title": "Introduction",
+    "description": "A file-routed Deno meta-framework that ships islands, not bundles.",
+    "order": 1,
+    "section": "Getting started"
+  },
+  "getting-started": {
+    "title": "Getting started",
+    "description": "Scaffold a Chevalier app in one command.",
+    "order": 2,
+    "section": "Getting started"
+  },
+  "pages": {
+    "title": "Pages",
+    "description": "File-routed Preact pages, loaders, forms, and actions.",
+    "order": 3,
+    "section": "Core concepts"
+  },
+  "islands": {
+    "title": "Islands",
+    "description": "Components that hydrate on the client — declared by path, no wrapper.",
+    "order": 4,
+    "section": "Core concepts"
+  },
+  "handlers": {
+    "title": "Handlers",
+    "description": "Any route file can export a Hono sub-app to serve any HTTP method.",
+    "order": 5,
+    "section": "Core concepts"
+  },
+  "layouts": {
+    "title": "Layouts and error pages",
+    "description": "The app shell, nested layouts, per-page head tags, 404 and 500.",
+    "order": 6,
+    "section": "Core concepts"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "description": "Signed session cookies, read and written from a loader or action.",
+    "order": 7,
+    "section": "Guides"
+  },
+  "middleware": {
+    "title": "Middleware",
+    "description": "Per-directory Hono middleware for auth guards, logging, and metrics.",
+    "order": 8,
+    "section": "Guides"
+  },
+  "testing": {
+    "title": "Testing",
+    "description": "Test loaders, actions, middleware and pages without booting Vite.",
+    "order": 9,
+    "section": "Guides"
+  },
+  "deployment": {
+    "title": "Deployment",
+    "description": "Build the client and SSR bundles, then serve or ship to Deno Deploy.",
+    "order": 10,
+    "section": "Guides"
+  }
+}

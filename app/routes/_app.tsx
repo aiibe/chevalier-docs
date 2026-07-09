@@ -7,10 +7,14 @@ export default function App({ children }: LayoutProps) {
   return (
     <html lang="en">
       <Head>
-        <title>Chevalier app</title>
+        <title>Chevalier — a Deno meta-framework that ships islands</title>
+        <meta
+          name="description"
+          content="Chevalier is a small, file-routed Deno meta-framework that renders with Preact and ships islands, not bundles."
+        />
         <link rel="icon" href="/favicon.png" type="image/png" />
       </Head>
-      <body class="mx-auto max-w-2xl p-8 text-gray-800">
+      <body class="bg-white text-slate-800 antialiased">
         {children}
       </body>
     </html>

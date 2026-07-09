@@ -1,32 +1,107 @@
 # chevalier-docs
 
-A [Chevalier](https://jsr.io/@chevalier/core) app.
+The documentation site for [Chevalier](https://github.com/aiibe/chevalier) —
+built with Chevalier, so the site is also a working example of the framework.
 
 ```sh
 deno install
 deno task dev       # start the dev server
 deno task check     # format, lint, and type-check
+deno task build     # build for production
+deno test -A        # run the tests (build first — see below)
 ```
 
-Routes live in `app/routes/`, islands in `app/islands/`. Static files (favicon,
-robots.txt, images) go in `public/` and are served from the site root.
+## Writing docs
 
-Styling is [Tailwind](https://tailwindcss.com) v4 — write utility classes in any
-component. Add your own CSS or `@theme` in `app/styles.css`.
+Each doc is a route file in `app/routes/docs/`, so `sessions.tsx` serves
+`/docs/sessions`. Prose is JSX. Adding a doc takes **two** edits.
 
-## Production
+First, index it in `app/routes/docs/meta.json`. `section` groups pages in the
+sidebar (in first-appearance order) and `order` sorts them:
+
+```json
+"sessions": {
+  "title": "Sessions",
+  "description": "Signed session cookies, read and written from a loader.",
+  "order": 7,
+  "section": "Guides"
+}
+```
+
+Then write the page. It declares its own headings and code samples, and wraps
+its prose in `<Doc>`:
+
+```tsx
+const headings: Heading[] = [{
+  id: "cookie-behaviour",
+  text: "Cookie behaviour",
+}];
+
+const samples = {
+  guard: { lang: "ts", src: `const s = await getSession(c, secret);` },
+} satisfies Samples;
+
+export const loader = (async () => ({
+  code: await highlightAll(samples),
+})) satisfies PageLoader;
+
+export default function Sessions({ code }: PageProps<typeof loader>) {
+  return (
+    <Doc slug="sessions" headings={headings}>
+      <p>…</p>
+      <Code html={code.guard} />
+      <H2 id="cookie-behaviour">Cookie behaviour</H2>
+    </Doc>
+  );
+}
+```
+
+The `slug` must be the file's own name. A slug missing from `meta.json` fails
+`deno check`; a slug belonging to a _different_ page typechecks but fails the
+tests, which assert every route renders the `<h1>` and `<title>` its own
+filename maps to.
+
+Forget the `meta.json` entry and the page vanishes from the sidebar and the
+prev/next chain — so a test asserts the JSON keys and the route files on disk
+are the same set. `docs/architecture.md` explains why the index is JSON rather
+than a glob over the route files.
+
+`<Doc>` renders the sidebar, the `<h1>` and `<title>` from `meta.json`, the
+table of contents from `headings`, and the prev/next footer. It can't live in
+`_layout.tsx`: a Chevalier layout gets only `{children}`, so it can't tell which
+doc is rendering.
+
+`headings` must match the `<H2>` tags the page renders — a test asserts it, so
+the TOC can't drift.
+
+Samples are highlighted by Shiki in the loader, limited to `tsx`, `ts`, and
+`bash`. To use another language, add its import in `app/highlight.ts` and widen
+`Lang`; `Samples` then type-checks every sample against it.
+
+## Zero client JavaScript
+
+Every page here is server-rendered and ships **no** client JavaScript. The site
+renders no islands; `app/routes/docs/islands.tsx` teaches them by quoting an
+island's source as a code sample. `tests/scripts.test.ts` asserts the zero-JS
+claim against the production build, so it can't silently rot.
+
+That test needs `dist/`, so build before testing:
 
 ```sh
-deno task build     # build the app
-deno task start     # serve the build
+deno task build && deno test -A
 ```
 
-Serves on port 8000. To change it, run `deno serve` directly with `--port`
-before the entry: `deno serve -A --port 3000 server.prod.ts`.
+Without a build it skips rather than fails.
 
-## Deploy to Deno Deploy
+## Design notes
 
-Build first, then ship `dist/` — it's gitignored, so include it explicitly:
+`docs/architecture.md` records why the docs are route files rather than
+markdown, why the nav index is JSON rather than a glob, why the page owns its
+chrome instead of the layout, and why Shiki is pinned to three languages.
+`TODO.md` tracks known issues, including a framework limitation this site ran
+into.
+
+## Deploy
 
 ```sh
 deno task build
