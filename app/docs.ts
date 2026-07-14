@@ -1,6 +1,5 @@
 // Nav registry. The index stays JSON, not a glob over the route files: that
-// cycles back through this module and forces the registry async — see
-// docs/architecture.md.
+// cycles back through this module and forces the registry async.
 
 import index from "./routes/docs/meta.json" with { type: "json" };
 

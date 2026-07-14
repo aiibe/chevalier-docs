@@ -1,5 +1,5 @@
 // Per-page chrome. Can't move to docs/_layout.tsx: layouts render after the
-// page, so a <PageHead> there is silently dropped — see docs/architecture.md.
+// page, so a <PageHead> there is silently dropped.
 import type { ComponentChildren } from "preact";
 import { PageHead } from "chevalier";
 import { docMeta, type DocSlug, neighbours } from "../docs.ts";
@@ -11,7 +11,22 @@ export function Code({ html }: { html: string }) {
 
 /** An h2 that anchors itself. `id` must match the page's `headings`. */
 export function H2({ id, children }: { id: string; children: string }) {
-  return <h2 id={id}>{children}</h2>;
+  return (
+    <h2 id={id}>
+      {children}
+      <a href={`#${id}`} class="anchor" aria-label={`Link to ${children}`}>
+        <svg
+          viewBox="0 0 16 16"
+          width="14"
+          height="14"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25Zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 1 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0Z" />
+        </svg>
+      </a>
+    </h2>
+  );
 }
 
 export interface Heading {

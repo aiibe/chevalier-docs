@@ -1,5 +1,5 @@
 // The sidebar only. The rest of a doc's chrome must render from the page
-// itself — see docs/architecture.md.
+// itself: layouts render after the page, so a <PageHead> here is dropped.
 import type { LayoutProps } from "chevalier";
 import { navSections, slugFromPath } from "../../docs.ts";
 

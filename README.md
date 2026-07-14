@@ -63,8 +63,8 @@ filename maps to.
 
 Forget the `meta.json` entry and the page vanishes from the sidebar and the
 prev/next chain — so a test asserts the JSON keys and the route files on disk
-are the same set. `docs/architecture.md` explains why the index is JSON rather
-than a glob over the route files.
+are the same set. The index is JSON rather than a glob over the route files
+because a glob cycles back through `app/docs.ts` and forces the registry async.
 
 `<Doc>` renders the sidebar, the `<h1>` and `<title>` from `meta.json`, the
 table of contents from `headings`, and the prev/next footer. It can't live in
@@ -95,9 +95,6 @@ Without a build it skips rather than fails.
 
 ## Design notes
 
-`docs/architecture.md` records why the docs are route files rather than
-markdown, why the nav index is JSON rather than a glob, why the page owns its
-chrome instead of the layout, and why Shiki is pinned to three languages.
 `TODO.md` tracks known issues, including a framework limitation this site ran
 into.
 
@@ -107,4 +104,15 @@ into.
 deno task build
 deno install -Arf jsr:@deno/deployctl
 deployctl deploy --include=dist --include=deno.json --entrypoint=server.prod.ts
+```
+
+### Docker
+
+The `Dockerfile` builds the site and ships it on a distroless image;
+`compose.yaml` runs it. `expose` publishes port 8000 only to other containers,
+so run behind a reverse proxy — or map it to the host with
+`docker run -p 8000:8000`.
+
+```sh
+docker compose up --build
 ```

@@ -1,7 +1,7 @@
 // Shiki, kept apart from the nav registry (docs.ts) on purpose: doc route files
 // import this for their code samples, and docs.ts imports the route files to
 // collect their `meta`. Merging the two would be a runtime import cycle that
-// deadlocks under `deno test`. See docs/architecture.md.
+// deadlocks under `deno test`.
 
 import { createHighlighterCore, type HighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";

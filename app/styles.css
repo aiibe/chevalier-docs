@@ -34,9 +34,43 @@
   margin-bottom: calc(var(--spacing) * 2);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Anchor target lands below the sticky header instead of under it. */
 .doc :is(h2, h3) {
   scroll-margin-top: calc(var(--spacing) * 20);
+}
+
+/* Opacity, not display:none — a hidden link is unreachable by keyboard. */
+.doc h2 > .anchor {
+  display: inline-flex;
+  align-items: center;
+  margin-left: calc(var(--spacing) * 2);
+  color: var(--color-slate-400);
+  opacity: 0;
+  transition: opacity 150ms ease;
+  text-decoration: none;
+}
+
+.doc h2:hover > .anchor,
+.doc h2 > .anchor:focus-visible {
+  opacity: 1;
+}
+
+.doc h2 > .anchor:hover {
+  color: var(--color-red-500);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .doc h2 > .anchor {
+    transition: none;
+  }
 }
 
 .doc p,

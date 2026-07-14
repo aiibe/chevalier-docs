@@ -5,6 +5,7 @@ import { Code, Doc, H2, type Heading } from "../../components/doc.tsx";
 const headings: Heading[] = [
   { id: "the-production-entry", text: "The production entry" },
   { id: "deno-deploy", text: "Deno Deploy" },
+  { id: "docker", text: "Docker" },
 ];
 
 const samples = {
@@ -38,6 +39,33 @@ export default {
 deno install -Arf jsr:@deno/deployctl
 deployctl deploy --include=dist --include=deno.json --entrypoint=server.prod.ts`,
   },
+  dockerfile: {
+    lang: "bash",
+    src: `FROM denoland/deno:debian-2.9.2 AS build
+WORKDIR /app
+COPY deno.json deno.lock ./
+RUN deno install --allow-scripts
+COPY . .
+RUN deno task build
+
+FROM denoland/deno:distroless-2.9.2
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/deno.json /app/deno.lock ./
+COPY server.prod.ts ./
+EXPOSE 8000
+CMD ["serve", "-A", "--host", "0.0.0.0", "--port", "8000", "server.prod.ts"]`,
+  },
+  compose: {
+    lang: "bash",
+    src: `services:
+  docs:
+    build: .
+    expose:
+      - "8000"
+    restart: unless-stopped`,
+  },
+  composeUp: { lang: "bash", src: `docker compose up --build` },
 } satisfies Samples;
 
 export const loader = (async () => ({
@@ -77,6 +105,48 @@ export default function Deployment(
         — it's gitignored, so include it explicitly:
       </p>
       <Code html={code.deploy} />
+
+      <H2 id="docker">Docker</H2>
+      <p>
+        The same entry runs in a container, because <code>deno serve</code>{" "}
+        takes the very handler Deno Deploy expects — there's no second
+        entrypoint to keep in sync. Build in a full image, where{" "}
+        <code>deno install</code>{" "}
+        and Vite have a toolchain to work with, then ship the result on a
+        distroless one that carries nothing but the Deno binary and the app:
+      </p>
+
+      <Code html={code.dockerfile} />
+
+      <p>
+        Only three things need to reach the runtime stage: <code>dist/</code>,
+        {" "}
+        <code>server.prod.ts</code>, and <code>deno.json</code> alongside{" "}
+        <code>deno.lock</code>. That last pair looks like a build leftover, but
+        dropping it breaks the container at startup rather than at build —{" "}
+        <code>server.prod.ts</code> imports <code>chevalier/static</code>{" "}
+        by its import-map specifier, so Deno reads the manifest to resolve it
+        and the lockfile to pin the version. Pair the build with a{" "}
+        <code>.dockerignore</code> that excludes{" "}
+        <code>dist/</code>, since the build stage runs{" "}
+        <code>deno task build</code>{" "}
+        itself and a local build would only be shipped to the daemon to be
+        overwritten.
+      </p>
+      <p>
+        A compose file runs it, and <code>expose</code>{" "}
+        publishes the port to other containers but not to the host — which
+        assumes a reverse proxy in front, where TLS and caching belong:
+      </p>
+
+      <Code html={code.compose} />
+      <Code html={code.composeUp} />
+
+      <p>
+        To reach the site directly instead — a local smoke test, or a
+        single-host deploy with nothing in front of it — map the port yourself
+        with <code>docker run -p 8000:8000</code>.
+      </p>
     </Doc>
   );
 }
