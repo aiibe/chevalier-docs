@@ -1,7 +1,11 @@
 // Landing page. Deliberately island-free: it ships zero client JS, which is
 // the claim the page makes. The sample is highlighted server-side in the loader.
-import { type PageLoader, type PageProps } from "chevalier";
+import { PageHead, type PageLoader, type PageProps } from "chevalier";
 import { highlight } from "../highlight.ts";
+import { SITE_URL } from "../site.ts";
+
+const OG_DESCRIPTION =
+  "Chevalier is a small, file-routed Deno meta-framework that renders with Preact and ships islands, not bundles.";
 
 const SAMPLE = `// app/routes/index.tsx  →  GET /
 import Counter from "../islands/counter.tsx";
@@ -54,6 +58,17 @@ export const loader = (async () => ({
 export default function Home({ sample }: PageProps<typeof loader>) {
   return (
     <>
+      <PageHead>
+        <meta name="description" content={OG_DESCRIPTION} />
+        <link rel="canonical" href={SITE_URL} />
+        <meta
+          property="og:title"
+          content="Chevalier — a Deno meta-framework that ships islands"
+        />
+        <meta property="og:description" content={OG_DESCRIPTION} />
+        <meta property="og:url" content={SITE_URL} />
+      </PageHead>
+
       <section class="mx-auto max-w-6xl px-6 pt-16 pb-12">
         <div class="grid items-center gap-12 lg:grid-cols-2">
           <div>

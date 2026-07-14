@@ -3,6 +3,7 @@
 import type { ComponentChildren } from "preact";
 import { PageHead } from "chevalier";
 import { docMeta, type DocSlug, neighbours } from "../docs.ts";
+import { canonical } from "../site.ts";
 
 export function Code({ html }: { html: string }) {
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
@@ -29,12 +30,17 @@ export function Doc(
 ) {
   const meta = docMeta(slug);
   const { prev, next } = neighbours(slug);
+  const url = canonical(`/docs/${slug}`);
 
   return (
     <>
       <PageHead>
         <title>{meta.title} — Chevalier</title>
         <meta name="description" content={meta.description} />
+        <link rel="canonical" href={url} />
+        <meta property="og:title" content={`${meta.title} — Chevalier`} />
+        <meta property="og:description" content={meta.description} />
+        <meta property="og:url" content={url} />
       </PageHead>
 
       <div class="flex min-w-0 flex-1 gap-12">
